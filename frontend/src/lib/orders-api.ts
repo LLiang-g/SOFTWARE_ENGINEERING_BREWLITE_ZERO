@@ -67,3 +67,7 @@ export function payOrder(input: {
 export function getMyOrders() {
     return authFetch<OrderView[]>('/orders/me', { cache: 'no-store' });
 }
+
+export function cancelOrder(id: number) {
+    return authFetch<OrderView>(`/orders/${id}/cancel`, { method: 'POST' });
+}
