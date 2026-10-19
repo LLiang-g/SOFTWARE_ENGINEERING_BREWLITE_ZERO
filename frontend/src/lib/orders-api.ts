@@ -63,3 +63,7 @@ export function payOrder(input: {
         }),
     });
 }
+
+export function getMyOrders() {
+    return authFetch<OrderView[]>('/orders/me', { cache: 'no-store' });
+}

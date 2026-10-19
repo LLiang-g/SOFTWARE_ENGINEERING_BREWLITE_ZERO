@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    HttpCode,
     Param,
     ParseIntPipe,
     Post,
@@ -23,11 +24,25 @@ export class OrdersController {
         return this.orders.create(user.id, dto);
     }
 
+    @Get('me')
+    findMine(@CurrentUser() user: AuthUser) {
+        return this.orders.findByUser(user.id);
+    }
+
     @Get(':id')
     findOne(
         @CurrentUser() user: AuthUser,
         @Param('id', ParseIntPipe) id: number,
     ) {
         return this.orders.findOne(user.id, id);
+    }
+
+    @Post(':id/cancel')
+    @HttpCode(200)
+    cancel(
+        @CurrentUser() user: AuthUser,
+        @Param('id', ParseIntPipe) id: number,
+    ) {
+        return this.orders.cancel(user.id, id);
     }
 }
