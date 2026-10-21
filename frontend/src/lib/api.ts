@@ -1,7 +1,12 @@
 import { AuthResponse, Product, ProductDetail, VoucherInfo } from './types';
 
-export const API_URL =
+const PUBLIC_API_URL =
     process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
+export const API_URL =
+    typeof window === 'undefined'
+        ? (process.env.INTERNAL_API_URL ?? PUBLIC_API_URL)
+        : PUBLIC_API_URL;
 
 export async function getProducts(): Promise<Product[]> {
     const res = await fetch(`${API_URL}/products`, { cache: 'no-store' });

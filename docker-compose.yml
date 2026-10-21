@@ -10,6 +10,37 @@ services:
       - "5432:5432"
     volumes:
       - brewlite-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U brewlite -d brewlite"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: brewlite-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://brewlite:brewlite@db:5432/brewlite?schema=public
+      JWT_SECRET: ${JWT_SECRET:-brewlite-demo-secret-doi-khi-trien-khai-that}
+      PORT: 3001
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3001
+    container_name: brewlite-frontend
+    depends_on:
+      - backend
+    environment:
+      INTERNAL_API_URL: http://backend:3001
+    ports:
+      - "3000:3000"
 
 volumes:
   brewlite-data:
